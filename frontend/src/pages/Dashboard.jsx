@@ -1,50 +1,94 @@
-import React from 'react'
-import AddCourseForm from '../components/AddCourseForm';
+import React, { useState } from "react";
+import { useQuery } from "react-query";
+import fetchAdminData from "../services/fetchAdminData";
+import { useNavigate } from "react-router-dom";
+import fetchAdminCourses from "../services/fetchAdminCourses";
+import AddCourseForm from "../components/AddCourseForm";
+import CourseTableRow from "../components/admin/courseTableRow";
+import Header from "../components/Header"
+import { makeTextShorter } from "../util/util";
+import { FaPlus } from "react-icons/fa";
 
-const courses = [
-    {
-      id: 1,
-      title: "React Basics",
-      description: "Introduction to React, covering basic concepts.",
-      price: 100,
-      imageLink: "https://via.placeholder.com/150",
-      published: true,
-    },
-    {
-      id: 2,
-      title: "JavaScript Advanced",
-      description: "Learn advanced JavaScript concepts and ES6 features.",
-      price: 150,
-      imageLink: "https://via.placeholder.com/150",
-      published: false,
-    },
-    {
-      id: 3,
-      title: "UI/UX Design",
-      description: "Basics of UI/UX design and how to enhance user experience.",
-      price: 200,
-      imageLink: "https://via.placeholder.com/150",
-      published: true,
-    },
-  ];
 
 function Dashboard() {
 
+  const [fetchCourses, setFetchCourses] = useState(0)
+
+
+  const navigator = useNavigate();
+  const [showCourseAddForm, setShowCourseAddForm] = useState(false)
+
+  const { data, isLoading, isError } = useQuery(
+    ["admin", fetchCourses],
+    fetchAdminData,
+    {
+      staleTime: 60 * 1000 * 10,
+      cacheTime: 60 * 1000 * 10,
+    }
+  );
+
+  const {data : courseData, isLoading : isCourseLoading, isError : isCourseError, isFetched : isCourseFetched} = useQuery(["uploadedCourses"], fetchAdminCourses, {
+    staleTime : 10*60*1000,
+    cacheTime : 1000*60*10
+  })
+
+  if (isLoading) {
     return (
-        <>
-        <AddCourseForm/>
-      <div className="bg-base-200 min-h-screen p-6">
+      <div className="w-full p-8">
+        <div className="w-full rounded-lg h-96 skeleton"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    navigator("/admin/signup");
+  }
+
+  return (
+    <>
+    <Header/>
+    <div className="flex flex-col lg:flex-row bg-base-200 min-h-screen">
+      {showCourseAddForm && <AddCourseForm fetchCourses={fetchCourses} setFetchCourses={setFetchCourses} setShowCourseAddForm={setShowCourseAddForm}/>}
+      {/* User Profile Sidebar */}
+      <aside className="w-full lg:w-1/4 bg-base-100 shadow-lg p-4 flex flex-col items-center">
+        <img
+          src={data?.data.profileImageLink}
+          alt="User Profile"
+          className="rounded-full h-24 w-24 object-cover mb-4"
+        />
+        <h2 className="text-2xl font-bold text-center">{data?.data.username}</h2>
+        <p className="text-sm text-center text-gray-500">{data?.data.role}</p>
+        <p className="mt-2 text-center">{makeTextShorter(data?.data.description, 200)}</p>
+        <a
+          href={data?.data.socialLink}
+          className="mt-4 text-primary text-sm"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Visit my social profile
+        </a>
+        <button className="btn btn-primary mt-4 w-full">Edit Profile</button>
+      </aside>
+
+      {/* Dashboard Main Content */}
+      {isError && <main className="w-full lg:w-3/4 p-6">Error</main>}
+      {isCourseLoading && <main className="w-full lg:w-3/4 p-6 h-80 skeleton"></main>}
+      {isCourseFetched && <main className="w-full lg:w-3/4 p-6">
         {/* Dashboard Header */}
         <div className="mb-6">
-          <h1 className="text-4xl font-bold text-neutral-content">Admin Dashboard</h1>
-          <p className="text-lg text-neutral-content">Manage courses, edit, and view all available courses.</p>
+          <h1 className="text-4xl font-bold text-neutral-content">
+            Admin Dashboard
+          </h1>
+          <p className="text-lg text-neutral-content">
+            Manage courses, edit, and view all available courses.
+          </p>
         </div>
-  
+
         {/* Add New Course Button */}
         <div className="flex justify-end mb-4">
-          <button className="btn btn-primary">Add New Course</button>
+          <button className="btn btn-primary" onClick={() => setShowCourseAddForm(!showCourseAddForm)}>Add New Course <FaPlus /></button>
         </div>
-  
+
         {/* Courses Table */}
         <div className="overflow-x-auto">
           <table className="table w-full bg-base-100">
@@ -59,33 +103,16 @@ function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {courses.map((course, index) => (
-                <tr key={course.id}>
-                  <th>{index + 1}</th>
-                  <td>{course.title}</td>
-                  <td>{course.description}</td>
-                  <td>${course.price}</td>
-                  <td>
-                    {course.published ? (
-                      <span className="badge badge-success">Published</span>
-                    ) : (
-                      <span className="badge badge-warning">Unpublished</span>
-                    )}
-                  </td>
-                  <td>
-                    <div className="flex space-x-2">
-                      <button className="btn btn-sm btn-info">Edit</button>
-                      <button className="btn btn-sm btn-error">Delete</button>
-                    </div>
-                  </td>
-                </tr>
+              {courseData?.data.map((course, index) => (
+                <CourseTableRow key={course.id} course={course} index={index} />
               ))}
             </tbody>
           </table>
         </div>
-      </div>
-      </>
+      </main>}
+    </div>
+    </>
+  );
+}
 
-    );
-  };
-export default Dashboard
+export default Dashboard;

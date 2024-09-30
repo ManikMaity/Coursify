@@ -7,4 +7,8 @@
   .pop-animation {
     animation: pop 1s ease-in-out;
   }
+
+  .pop-animation-quick{
+    animation: pop 0.5s ease-in-out;
+  }
   

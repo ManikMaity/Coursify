@@ -2,8 +2,8 @@
 import React, { useState } from 'react'
 import { useMutation } from 'react-query';
 import userRegister from '../services/userRegister';
-import { FaThumbsUp } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
+import FormSuccess from './FormSuccess';
 
 
 const Register = ({setShowRegister}) => {
@@ -12,9 +12,6 @@ const Register = ({setShowRegister}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const navigator = useNavigate();
-
 
   const mutation = useMutation(userRegister, {
     onSuccess : (data) => {
@@ -45,15 +42,7 @@ const Register = ({setShowRegister}) => {
         <div className="w-full relative max-w-md p-8 bg-base-100 rounded-lg shadow-lg">
           <h2 className="text-3xl font-bold mb-6 text-center text-neutral-content">Register</h2>
 
-          {mutation.isSuccess && <div className='h-full bg-base-100 top-0 w-full absolute right-0 grid place-content-center text-center'>
-            <div className='flex flex-col items-center justify-center gap-4 pop-animation'>
-            <div className='h-24 w-24 rounded-full bg-green-600 grid place-content-center'>
-              <FaThumbsUp className='text-4xl text-white' />
-            </div>
-              <p className='text-5xl text-white' >Success</p>
-            </div>
-
-          </div>}
+          {mutation.isSuccess && <FormSuccess/>}
 
           <form>
             <div className="mb-4">

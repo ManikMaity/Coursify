@@ -17,7 +17,7 @@ function Header() {
   );
 
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-base-100 shadow sticky top-0 z-10">
       <div className="flex-1 navbar-start">
         <Link to="/" className="btn btn-ghost text-xl">Coursify</Link>
       </div>
@@ -30,6 +30,7 @@ function Header() {
       </div>
 
       <div className="flex-none gap-2 navbar-end">
+        <Link to={"/admin"} className="btn btn-primary btn-sm btn-outline">🧑‍🏫 Admin</Link>
         <div className="form-control">
           <input
             type="text"

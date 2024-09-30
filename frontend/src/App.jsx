@@ -6,6 +6,7 @@ import "./app.css"
 import Dashboard from "./pages/Dashboard"
 import AddCourseForm from "./components/AddCourseForm"
 import PurchasedCourse from "./pages/PurchasedCourse"
+import AdminSignupPage from "./pages/AdminSignupPage"
 function App() {
 
   const router = createBrowserRouter([
@@ -20,6 +21,14 @@ function App() {
     {
       path : "purchased",
       element : <PurchasedCourse/>
+    },
+    {
+      path : "admin",
+      element : <Dashboard/>
+    },
+    {
+      path : "admin/signup",
+      element : <AdminSignupPage/>
     }
 ])
 
