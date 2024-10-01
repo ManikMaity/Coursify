@@ -1,7 +1,7 @@
 const express = require("express");
 const JWT = require("jsonwebtoken");
 const { UserModel, CourseModel, AdminModel } = require("./db");
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
 const { z } = require("zod");
 const cors = require("cors");
 const e = require("express");
