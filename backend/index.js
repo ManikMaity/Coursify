@@ -13,6 +13,7 @@ app.use(cors());
 // **************************** Constant values *************************
 const saltRound = 5;
 const JWT_SECRECT = "manikmaity";
+const port = process.env.PORT || 3000;
 
 // ************************* input validations ******************************
 // signup validation
@@ -27,11 +28,37 @@ const requireLoginBody = z.object({
   password: z.string().min(1).max(100),
 });
 
+const requireSignupBodyForAdmin = z.object({
+  username: z
+    .string()
+    .min(1, "Username is required")
+    .max(100, "Username cannot exceed 100 characters"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .max(100, "Email cannot exceed 100 characters")
+    .email("Invalid email format"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(100, "Password cannot exceed 100 characters"),
+  profileImageLink: z
+    .string()
+    .min(1, "Profile image link is required")
+    .max(200, "Profile image link cannot exceed 200 characters")
+    .url("Invalid URL format"),
+  description: z
+    .string()
+    .min(20, "Description must be at least 20 characters long"),
+  role: z.string().min(1, "Role is required").max(100, "Role cannot exceed 100 characters"),
+  socialLink: z.string().max(100).optional()
+});
+
 const requireAddCourseBody = z.object({
-  title: z.string().min(1).max(100),
-  description: z.string().min(1).max(100),
-  price: z.number().min(1),
-  imageLink: z.string().min(1).max(200),
+  title: z.string().min(1, "Title is required").max(100, "Title cannot exceed 100 characters"),
+  description: z.string().min(1, "Description is required").max(300, "Description cannot exceed 300 characters"),
+  price: z.number().min(0, "Price cannot be lower then 0"),
+  imageLink: z.string().min(1, "Course image is required").max(200, "Course image linkcannot exceed 100 characters"),
   published: z.boolean(),
 });
 
@@ -62,6 +89,7 @@ async function auth(req, res, next) {
 async function adminAuth(req, res, next) {
   try {
     const adminToken = req.headers.admintoken;
+
     if (!adminToken) {
       throw new Error("Admin token is not provided");
     }
@@ -84,14 +112,13 @@ async function adminAuth(req, res, next) {
 // ***************************** User routes ********************************
 
 app.get("/user", auth, (req, res) => {
-  try{
+  try {
     const user = req.user;
-    res.json({username : user.username})
-  }
-  catch(err){
+    res.json({ username: user.username });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
-})
+});
 
 app.post("/user/signup", async (req, res) => {
   try {
@@ -202,21 +229,23 @@ app.post("/admin/signup", async (req, res) => {
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
+    const role = req.body.role;
+    const description = req.body.description;
+    const profileImageLink = req.body.profileImageLink; 
+    const socialLink = req.body.socialLink;
 
     // Input validation
-    const inputValidated = requireSignupBody.safeParse(req.body);
+    const inputValidated = requireSignupBodyForAdmin.safeParse(req.body);
     if (!inputValidated.success) {
       throw new Error(`${inputValidated.error.errors[0].message}`);
     }
 
-    const all = await AdminModel.find();
 
     // Admin already exits
     const admin = await AdminModel.findOne({
       email,
     });
     if (admin) {
-      console.log(all);
       throw new Error("Admin already exits");
     }
 
@@ -224,6 +253,10 @@ app.post("/admin/signup", async (req, res) => {
       username,
       email,
       password: bcrypt.hashSync(password, saltRound),
+      role,
+      description,
+      profileImageLink,
+      socialLink
     });
 
     res.json({ msg: "Admin account created😊" });
@@ -259,6 +292,15 @@ app.post("/admin/login", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+app.get("/admin/me", adminAuth, (req, res) => {
+  try{
+    res.json(req.admin);
+  }
+  catch(err){
+    res.status(500).json({error : err});
+  }
+})
 
 // Create a course
 app.post("/admin/courses/add", adminAuth, async (req, res) => {
@@ -324,6 +366,19 @@ app.put("/admin/courses/:courseId", adminAuth, async (req, res) => {
   }
 });
 
+
+// Delete course
+app.delete("/admin/courses/delete/:courseId", adminAuth, async (req, res) => {
+  try{
+    const courseId = req.params.courseId;
+    await CourseModel.findByIdAndDelete(courseId);
+    res.json({msg : "Course deleted"});
+  }
+  catch(err){
+    res.status(500).json({error : err});
+  }
+})
+
 // Get all uploaded courses
 app.get("/admin/courses", adminAuth, async (req, res) => {
   try {
@@ -342,4 +397,4 @@ app.get("/admin/courses", adminAuth, async (req, res) => {
   }
 });
 
-app.listen(3000);
+app.listen(port);

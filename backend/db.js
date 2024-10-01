@@ -25,6 +25,10 @@ const Admin = {
     username : String,
     email : String,
     password : String,
+    role : String,
+    description : String,
+    profileImageLink : String,
+    socialLink : String
 }
 
 
