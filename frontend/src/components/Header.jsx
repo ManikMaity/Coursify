@@ -16,6 +16,13 @@ function Header() {
     }
   );
 
+  if (isLoading) {
+    return <div className="h-30 w-full skeleton"></div>;
+  }
+  if (isError){
+    return "";
+  }
+
   return (
     <div className="navbar bg-base-100 shadow sticky top-0 z-10">
       <div className="flex-1 navbar-start">
@@ -23,6 +30,9 @@ function Header() {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
+        <li>
+            <Link to="/">Home</Link>
+          </li>
           <li>
             <Link to="/purchased">My Course</Link>
           </li>

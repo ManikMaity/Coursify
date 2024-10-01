@@ -4,13 +4,15 @@ import Home from "./pages/Home"
 import Signup from "./pages/Signup"
 import "./app.css"
 import Dashboard from "./pages/Dashboard"
-import AddCourseForm from "./components/AddCourseForm"
 import PurchasedCourse from "./pages/PurchasedCourse"
 import AdminSignupPage from "./pages/AdminSignupPage"
+import PageLayout from "./pages/PageLayout"
 function App() {
 
   const router = createBrowserRouter([
     {
+      element : <PageLayout/>,
+      children : [{
         path : "/",
         element : <Home/>
     },
@@ -29,6 +31,7 @@ function App() {
     {
       path : "admin/signup",
       element : <AdminSignupPage/>
+    }]
     }
 ])
 

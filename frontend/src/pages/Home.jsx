@@ -19,7 +19,6 @@ const Home = () => {
   if (isError){
     navigator("/signup")
   }
-  console.log(data);
 
   return (
     <>
