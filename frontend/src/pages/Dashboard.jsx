@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import fetchAdminCourses from "../services/fetchAdminCourses";
 import AddCourseForm from "../components/AddCourseForm";
 import CourseTableRow from "../components/admin/CourseTableRow";
-import Header from "../components/Header"
 import { makeTextShorter } from "../util/util";
 import { FaPlus } from "react-icons/fa";
 
@@ -45,7 +44,6 @@ function Dashboard() {
 
   return (
     <>
-    <Header/>
     <div className="flex flex-col lg:flex-row bg-base-200 min-h-screen">
       {showCourseAddForm && <AddCourseForm refetch={refetch} setShowCourseAddForm={setShowCourseAddForm}/>}
       {/* User Profile Sidebar */}
@@ -78,7 +76,7 @@ function Dashboard() {
 
       {/* Dashboard Main Content */}
       {isError && <main className="w-full lg:w-3/4 p-6">Error</main>}
-      {isCourseLoading && <main className="w-full lg:w-3/4 p-6 h-80 skeleton"></main>}
+      {(isCourseLoading || isCourseError) && <main className="w-full lg:w-3/4 p-6 h-80 skeleton"></main>}
       {isCourseFetched && <main className="w-full lg:w-3/4 p-6">
         {/* Dashboard Header */}
         <div className="mb-6">

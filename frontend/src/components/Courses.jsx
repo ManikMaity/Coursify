@@ -1,12 +1,10 @@
 import React from "react";
-import Header from "./Header";
 import CourseCard from "./CourseCard";
 
 const Courses = ({ coursesData = [] }) => {
   return (
     <>
       <div className="flex flex-col items-center min-h-screen bg-base-200 p-0">
-        <Header />
         <h2 className="text-3xl font-bold text-neutral-content my-6">
           {coursesData ? "Available Courses" : "No Courses"}
         </h2>
