@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { useState } from 'react'
 import { FaTrashAlt, FaUserEdit } from 'react-icons/fa'
 import { makeTextShorter } from '../../util/util'
