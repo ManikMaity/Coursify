@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const JWT = require("jsonwebtoken");
 const { UserModel, CourseModel, AdminModel } = require("./db");
@@ -12,8 +13,10 @@ app.use(cors());
 
 // **************************** Constant values *************************
 const saltRound = 5;
-const JWT_SECRECT = "manikmaity";
+const JWT_SECRECT = process.env.JWT_SECRECT || "manikmaity";
 const port = process.env.PORT || 3000;
+
+console.log(process.env.JWT_SECRECT);
 
 // ************************* input validations ******************************
 // signup validation
@@ -397,4 +400,6 @@ app.get("/admin/courses", adminAuth, async (req, res) => {
   }
 });
 
-app.listen(port);
+app.listen(port, () => {
+  console.log(`Server started in port - ${port}`);
+});
