@@ -4,7 +4,7 @@ import fetchAdminData from "../services/fetchAdminData";
 import { useNavigate } from "react-router-dom";
 import fetchAdminCourses from "../services/fetchAdminCourses";
 import AddCourseForm from "../components/AddCourseForm";
-import CourseTableRow from "../components/admin/courseTableRow";
+import CourseTableRow from "../components/admin/CourseTableRow";
 import Header from "../components/Header"
 import { makeTextShorter } from "../util/util";
 import { FaPlus } from "react-icons/fa";
@@ -12,14 +12,13 @@ import { FaPlus } from "react-icons/fa";
 
 function Dashboard() {
 
-  const [fetchCourses, setFetchCourses] = useState(0)
 
 
   const navigator = useNavigate();
   const [showCourseAddForm, setShowCourseAddForm] = useState(false)
 
   const { data, isLoading, isError } = useQuery(
-    ["admin", fetchCourses],
+    ["admin"],
     fetchAdminData,
     {
       staleTime: 60 * 1000 * 10,
@@ -27,7 +26,7 @@ function Dashboard() {
     }
   );
 
-  const {data : courseData, isLoading : isCourseLoading, isError : isCourseError, isFetched : isCourseFetched} = useQuery(["uploadedCourses"], fetchAdminCourses, {
+  const {data : courseData, isLoading : isCourseLoading, isError : isCourseError, isFetched : isCourseFetched, refetch} = useQuery(["uploadedCourses"], fetchAdminCourses, {
     staleTime : 10*60*1000,
     cacheTime : 1000*60*10
   })
@@ -48,7 +47,7 @@ function Dashboard() {
     <>
     <Header/>
     <div className="flex flex-col lg:flex-row bg-base-200 min-h-screen">
-      {showCourseAddForm && <AddCourseForm fetchCourses={fetchCourses} setFetchCourses={setFetchCourses} setShowCourseAddForm={setShowCourseAddForm}/>}
+      {showCourseAddForm && <AddCourseForm refetch={refetch} setShowCourseAddForm={setShowCourseAddForm}/>}
       {/* User Profile Sidebar */}
       <aside className="w-full lg:w-1/4 bg-base-100 shadow-lg p-4 flex flex-col items-center">
         <img
@@ -68,6 +67,13 @@ function Dashboard() {
           Visit my social profile
         </a>
         <button className="btn btn-primary mt-4 w-full">Edit Profile</button>
+        <button className="btn btn-error btn-outline mt-4 w-full" onClick={() => {
+          const sure = confirm("Are you sure?");
+          if (sure){
+            localStorage.removeItem("admintoken");
+            location.reload();
+          }
+          }}>Logout</button>
       </aside>
 
       {/* Dashboard Main Content */}
@@ -104,7 +110,7 @@ function Dashboard() {
             </thead>
             <tbody>
               {courseData?.data.map((course, index) => (
-                <CourseTableRow key={course.id} course={course} index={index} />
+                <CourseTableRow refetch={refetch} key={course._id} course={course} index={index} />
               ))}
             </tbody>
           </table>

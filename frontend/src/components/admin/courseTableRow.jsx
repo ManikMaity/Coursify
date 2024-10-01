@@ -1,10 +1,43 @@
-import React from 'react'
+/* eslint-disable react/prop-types */
+import React, { useState } from 'react'
 import { FaTrashAlt, FaUserEdit } from 'react-icons/fa'
 import { makeTextShorter } from '../../util/util'
+import { useMutation } from 'react-query';
+import deleteCourse from '../../services/deleteCourse';
+import EditCourseForm from './EditCourseForm';
 
-function courseTableRow({course, index}) {
+function CourseTableRow({course, index, refetch}) {
+
+  const [showEditForm, setShowEditForm] = useState(false);
+
+
+  const mutation = useMutation(deleteCourse, {
+    onSuccess : async (data) => {
+      await refetch();
+      console.log(data, "Course is deleted");
+    },
+    onError : (data) => {
+      console.log(data, "Course is not deleted");
+    }
+  })
+
+
+
+
+
+  function handleDelete() {
+    const id = course._id;
+    const sure = confirm("Are you sure?");
+    if (sure){
+      mutation.mutate(`${id}`);
+    }
+  }
+
+
   return (
-    <tr key={course.id}>
+    <>
+    {showEditForm && <EditCourseForm currentCourse={course} setShowEditForm={setShowEditForm} refetch={refetch}/>}
+    <tr key={course._id}>
     <th>{index + 1}</th>
     <td>{course.title}</td>
     <td className="whitespace-normal break-words max-w-xs">
@@ -20,16 +53,17 @@ function courseTableRow({course, index}) {
     </td>
     <td>
       <div className="flex md:flex-row flex-col gap-2 space-x-2">
-        <button className="btn btn-sm btn-info flex flex-nowrap">
+        <button onClick={() => setShowEditForm(true)} className="btn btn-sm btn-info flex flex-nowrap">
           <FaUserEdit className="mr-1" /> Edit
         </button>
-        <button className="btn btn-sm btn-error flex flex-nowrap">
-          <FaTrashAlt className="mr-1" /> Delete
+        <button onClick={handleDelete} className="btn btn-sm  btn-error flex flex-nowrap">
+          <FaTrashAlt className="mr-1"/> {mutation.isLoading ? "Deleting.." :"Delete"}
         </button>
       </div>
     </td>
   </tr>
+  </>
   )
 }
 
-export default courseTableRow
+export default CourseTableRow
