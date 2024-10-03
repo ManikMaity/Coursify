@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt');
 const { z } = require("zod");
 const cors = require("cors");
 const e = require("express");
+const { default: axios } = require('axios');
+const { formatPlaylistData } = require('./util');
 
 const app = express();
 app.use(express.json());
@@ -63,6 +65,14 @@ const requireAddCourseBody = z.object({
   price: z.number().min(0, "Price cannot be lower then 0"),
   imageLink: z.string().min(1, "Course image is required").max(200, "Course image linkcannot exceed 100 characters"),
   published: z.boolean(),
+  ytPlaylistLink: z.string()
+  .min(1, "YouTube Playlist link is required")
+  .max(200, "YouTube Playlist link cannot exceed 200 characters")
+  .regex(
+    /^https:\/\/www\.youtube\.com\/playlist\?list=[A-Za-z0-9_-]+$/,
+    "Invalid YouTube Playlist link, ex - https://www.youtube.com/playlist?list=PLwGdqUZWnOp00IbeN0OtL9dmnasipZ9x8"
+  )
+  .optional()
 });
 
 // ************************ Middleware ******************************
@@ -303,7 +313,22 @@ app.get("/admin/me", adminAuth, (req, res) => {
   catch(err){
     res.status(500).json({error : err});
   }
+});
+
+
+// Extract Data From youtube 
+app.get("/admin/courses/yt", adminAuth, async(req, res) => {
+  try {
+    const url = req.query.url;
+    const response = await axios.get(`https://export-youtube-playlist.vercel.app/get-data/?url=${url}&file_type=CSV`);
+    const data = formatPlaylistData(response);
+    res.json(data);
+  }
+  catch (err){
+    res.status(500).json({ error: err.message });
+  }
 })
+
 
 // Create a course
 app.post("/admin/courses/add", adminAuth, async (req, res) => {
@@ -314,6 +339,7 @@ app.post("/admin/courses/add", adminAuth, async (req, res) => {
     const price = req.body.price;
     const imageLink = req.body.imageLink;
     const published = req.body.published;
+    const ytPlaylistLink = req.body.ytPlaylistLink;
 
     const inputValidated = requireAddCourseBody.safeParse(req.body);
     if (!inputValidated.success) {
