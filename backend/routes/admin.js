@@ -8,8 +8,8 @@ const { default: axios } = require("axios");
 const { formatPlaylistData } = require("../util");
 const adminRoute = express.Router();
 
-const saltRound = process.env.SALT_ROUND || 5;
-const JWT_SECRECT = process.env.JWT_SECRECT || "manikmaity";
+const saltRound = process.env.SALT_ROUND;
+const JWT_SECRECT = process.env.JWT_SECRECT;
 
 async function adminAuth(req, res, next) {
     try {

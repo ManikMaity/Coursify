@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard"
 import PurchasedCourse from "./pages/PurchasedCourse"
 import AdminSignupPage from "./pages/AdminSignupPage"
 import PageLayout from "./pages/PageLayout"
+import CoursePage from "./pages/CoursePage"
 function App() {
 
   const router = createBrowserRouter([
@@ -31,7 +32,12 @@ function App() {
     {
       path : "admin/signup",
       element : <AdminSignupPage/>
-    }]
+    },
+    {
+      path : "coursePage/:courseid",
+      element : <CoursePage/>
+    }
+  ]
     }
 ])
 

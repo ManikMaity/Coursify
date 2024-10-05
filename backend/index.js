@@ -8,9 +8,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// **************************** Constant values *************************
-const saltRound = 5;
-const JWT_SECRECT = process.env.JWT_SECRECT || "manikmaity";
+const saltRound = process.env.SALT_ROUND;
+const JWT_SECRECT = process.env.JWT_SECRECT;
 const port = process.env.PORT || 3000;
 
 

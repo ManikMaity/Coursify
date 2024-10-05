@@ -1,9 +1,11 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
+const connectionString = process.env.CONNECTION_STRING;
 
-mongoose.connect("mongodb+srv://manikmaityhaker2003:w0K2cWAQAnjTreKl@cluster0.bajhd.mongodb.net/course-app-database")
+mongoose.connect(connectionString)
 .then(() => {
     console.log("Connected");
 })
@@ -14,14 +16,14 @@ mongoose.connect("mongodb+srv://manikmaityhaker2003:w0K2cWAQAnjTreKl@cluster0.ba
 
 // Defining the schema 
 
-const User = {
+const User = mongoose.Schema({
     username : String,
     email : String,
     password : String,
     isAdmin : Boolean
-}
+})
 
-const Admin = {
+const Admin = mongoose.Schema({
     username : String,
     email : String,
     password : String,
@@ -29,10 +31,10 @@ const Admin = {
     description : String,
     profileImageLink : String,
     socialLink : String
-}
+})
 
 
-const Course = {
+const Course = mongoose.Schema({
     title : String,
     description : String,
     price : Number,
@@ -41,7 +43,7 @@ const Course = {
     publishedBy : ObjectId,
     purchasedBy : Array,
     videos : Array
-}
+})
 
 
 // Defining the model

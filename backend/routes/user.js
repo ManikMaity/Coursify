@@ -6,8 +6,8 @@ const JWT = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const userRouter = express.Router();
 
-const saltRound = process.env.SALT_ROUND || 5;
-const JWT_SECRECT = process.env.JWT_SECRECT || "manikmaity";
+const saltRound = process.env.SALT_ROUND;
+const JWT_SECRECT = process.env.JWT_SECRECT;
 
 async function auth(req, res, next) {
   try {

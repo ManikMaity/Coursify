@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import addNewCourse from "../services/addNewCourse";
+import fetchPlaylistData from "../services/fetchPlaylistData";
 
 const AddCourseForm = ({setShowCourseAddForm, refetch}) => {
   const [published, setPublished] = useState(false);
@@ -8,6 +9,7 @@ const AddCourseForm = ({setShowCourseAddForm, refetch}) => {
   const [courseDescription, setCourseDescription] = useState("");
   const [coursePrice, setCoursePrice] = useState(0);
   const [courseImage, setCourseImage] = useState("");
+  const [ytLink, setYtLink] = useState("");
 
   const mutation = useMutation(addNewCourse, {
     onSuccess : async(data) => {
@@ -21,6 +23,17 @@ const AddCourseForm = ({setShowCourseAddForm, refetch}) => {
     }
   });
 
+  const mutation2 = useMutation({
+    mutationFn : fetchPlaylistData, cacheTime : 1000*60*10, onSuccess : (data) => autoFillAllFiled(data.data), onError : (data) => console.log(data)})
+
+  function autoFillAllFiled (data){
+      setPublished(false);
+      setCourseTitle(`${data?.playlistTitle}`);
+      setCourseDescription(`${data?.description}`);
+      setCourseImage(`${data?.videos[0].thumbnail}`);
+  }
+
+
   function handleSubmit() {
     mutation.mutate({
       title: courseTitle,
@@ -28,6 +41,7 @@ const AddCourseForm = ({setShowCourseAddForm, refetch}) => {
       price: Number(coursePrice),
       imageLink: courseImage,
       published,
+      ytPlaylistLink : ytLink
     });
   }
 
@@ -35,10 +49,30 @@ const AddCourseForm = ({setShowCourseAddForm, refetch}) => {
     setShowCourseAddForm(false);
   }
 
+  function handleAutoFill() {
+    mutation2.mutate(ytLink);
+  }
+
   return (
     <div className="bg-[#1b1b1bb7] flex items-center absolute top-0 z-20 right-0 min-h-screen w-screen  justify-center p-6">
       <div className="w-full max-w-lg flex flex-col bg-base-100 shadow-md rounded-md p-6">
         <h2 className="text-3xl font-bold mb-6">Add New Course</h2>
+
+        <div className="form-control mb-4">
+          <label className="label">
+            <span className="label-text">Yt Playlist Link</span>
+          </label>
+          <div className="flex gap-2 items-center">
+          <input
+            type="text"
+            value={ytLink}
+            onChange={(e) => setYtLink(e.target.value)}
+            placeholder="Enter youtube playlist link here.."
+            className="input input-bordered w-full"
+          />
+          <button onClick={handleAutoFill} className="btn btn-primary btn-outline btn-sm">{mutation2.isLoading ? "Loading..." : "Autofill"}</button>
+          </div>
+        </div>
 
         {/* Course Title */}
         <div className="form-control mb-4">
