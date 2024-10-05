@@ -15,14 +15,29 @@ function formatPlaylistData(responseData) {
   const data = responseData.data;
   const formattedData = {};
   formattedData.playlistTitle = data?.title;
-  formattedData.titles = data?.video_data?.Title;
   formattedData.description = cleanUpDescription(
     data?.video_data?.Description[0],
-    150
+    350
   );
-  formattedData.thumbnails = data?.video_data["Thumbnail url"];
-  formattedData.durations = data?.video_data.Duration;
-  formattedData.url = data?.video_data["Video url"];
+  formattedData.videos = [];
+
+  const titles = data?.video_data?.Title;
+  const thumbnails = data?.video_data["Thumbnail url"];
+  const durations = data?.video_data.Duration;
+  const url = data?.video_data["Video url"];
+
+  titles.forEach((title, index) => {
+    const tempObj = {
+      title,
+      duration : durations[index],
+      thumbnail : thumbnails[index],
+      url : url[index]
+    }
+
+    formattedData.videos.push(tempObj);
+  })
+
+
   return formattedData;
 }
 

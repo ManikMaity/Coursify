@@ -39,7 +39,8 @@ const Course = {
     imageLink : String,
     published : Boolean,
     publishedBy : ObjectId,
-    purchasedBy : Array
+    purchasedBy : Array,
+    videos : Array
 }
 
 
