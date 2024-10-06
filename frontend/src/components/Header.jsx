@@ -28,7 +28,7 @@ function Header() {
       <div className="flex-1 navbar-start">
         <Link to="/" className="btn btn-ghost text-xl">Coursify</Link>
       </div>
-      <div className="navbar-center hidden lg:flex">
+      <div className="navbar-center hidden md:flex">
         <ul className="menu menu-horizontal px-1">
         <li>
             <Link to="/">Home</Link>
@@ -69,9 +69,21 @@ function Header() {
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
             >
-              <li>
+                            <li>
                 <a>{data.data.username}</a>
               </li>
+
+
+              <li className="flex md:hidden">
+              <Link to="/">Home</Link>
+              </li>
+
+              <li className="flex md:hidden">
+
+              <Link to="/purchased">My Course</Link>
+              </li>
+
+
               <li
                 onClick={() => {
                   localStorage.removeItem("token");
