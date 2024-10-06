@@ -12,6 +12,9 @@ const saltRound = process.env.SALT_ROUND;
 const JWT_SECRECT = process.env.JWT_SECRECT;
 const port = process.env.PORT || 3000;
 
+app.get("/", (req, res) => {
+  res.json({msg : "Hello World!"});
+});
 
 app.use("/user", userRouter);
 app.use("/admin", adminRoute);
