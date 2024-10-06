@@ -1,30 +1,29 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
-import adminSignin from '../../services/adminSignin';
-import { useMutation } from 'react-query';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import adminSignin from "../../services/adminSignin";
+import { useMutation } from "react-query";
 
-function AdminSignin({setShowRegister}) {
+function AdminSignin({ setShowRegister }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigator = useNavigate();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const navigator = useNavigate();
+  const mutation = useMutation(adminSignin, {
+    onSuccess: (data) => {
+      localStorage.setItem("admintoken", data.data.adminToken);
+      navigator("/admin");
+    },
+    onError: (data) => {
+      console.log(data);
+    },
+  });
 
-    const mutation = useMutation(adminSignin, {
-      onSuccess: (data) => {
-        localStorage.setItem("admintoken", data.data.adminToken);
-        navigator("/admin");
-      },
-      onError: (data) => {
-        console.log(data);
-      },
-    });
+  async function handleSignin() {
+    mutation.mutate({ email, password });
+    setEmail("");
+    setPassword("");
+  }
 
-    async function handleSignin() {
-      mutation.mutate({ email, password });
-      setEmail("");
-      setPassword("");
-    }
-    
   return (
     <div className="flex justify-center items-center h-screen bg-base-200">
       <div className="w-full max-w-md p-8 bg-base-100 rounded-lg shadow-lg">
@@ -75,6 +74,10 @@ function AdminSignin({setShowRegister}) {
             <p className="text-red-500">{mutation.error.response.data.error}</p>
           )}
 
+          <p className="text-xs">
+            email : john.doe@example.com | password : john12345
+          </p>
+
           <button
             type="submit"
             className="btn btn-primary w-full mt-4"
@@ -94,7 +97,7 @@ function AdminSignin({setShowRegister}) {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
-export default AdminSignin
+export default AdminSignin;

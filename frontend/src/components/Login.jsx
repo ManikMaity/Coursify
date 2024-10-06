@@ -75,6 +75,7 @@ const Login = ({ setShowRegister }) => {
           {mutation.isError && (
             <p className="text-red-500">{mutation.error.response.data.error}</p>
           )}
+          <p className="text-xs">email : john.doe@example.com | password : john12345</p>
 
           <button
             type="submit"

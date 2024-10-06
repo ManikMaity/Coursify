@@ -4,7 +4,6 @@ import fetchUsername from "../services/fetchUsername";
 import { Link, useNavigate } from "react-router-dom";
 
 function Header() {
-
   const navigator = useNavigate();
 
   const { data, isLoading, isFetched, isError } = useQuery(
@@ -19,18 +18,20 @@ function Header() {
   if (isLoading) {
     return <div className="h-30 w-full skeleton"></div>;
   }
-  if (isError){
+  if (isError) {
     return "";
   }
 
   return (
     <div className="navbar bg-base-100 shadow sticky top-0 z-10">
       <div className="flex-1 navbar-start">
-        <Link to="/" className="btn btn-ghost text-xl">Coursify</Link>
+        <Link to="/" className="btn btn-ghost text-xl">
+          Coursify
+        </Link>
       </div>
       <div className="navbar-center hidden md:flex">
         <ul className="menu menu-horizontal px-1">
-        <li>
+          <li>
             <Link to="/">Home</Link>
           </li>
           <li>
@@ -40,7 +41,9 @@ function Header() {
       </div>
 
       <div className="flex-none gap-2 navbar-end">
-        <Link to={"/admin"} className="btn btn-primary btn-sm btn-outline">🧑‍🏫 Admin</Link>
+        <Link to={"/admin"} className="btn btn-primary btn-sm btn-outline">
+          🧑‍🏫 Admin
+        </Link>
         <div className="form-control">
           <input
             type="text"
@@ -69,20 +72,17 @@ function Header() {
               tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
             >
-                            <li>
+              <li>
                 <a>{data.data.username}</a>
               </li>
 
-
               <li className="flex md:hidden">
-              <Link to="/">Home</Link>
+                <Link to="/">Home</Link>
               </li>
 
               <li className="flex md:hidden">
-
-              <Link to="/purchased">My Course</Link>
+                <Link to="/purchased">My Course</Link>
               </li>
-
 
               <li
                 onClick={() => {
