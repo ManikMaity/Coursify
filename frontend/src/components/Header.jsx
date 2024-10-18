@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import fetchUsername from "../services/fetchUsername";
 import { Link, useNavigate } from "react-router-dom";
@@ -14,6 +14,13 @@ function Header() {
       staleTime: 1000 * 60 * 10,
     }
   );
+  const [search, setSearch] = useState("");
+
+  function handleSearch(e) {
+    e.preventDefault()
+    if (search.trim() === "") return;
+    navigator(`/search/${search}`);
+  }
 
   if (isLoading) {
     return <div className="h-30 w-full skeleton"></div>;
@@ -23,7 +30,7 @@ function Header() {
   }
 
   return (
-    <div className="navbar bg-base-100 shadow sticky top-0 z-10">
+    <div className="navbar bg-base-100 shadow sticky top-0 z-50">
       <div className="flex-1 navbar-start">
         <Link to="/" className="btn btn-ghost text-xl">
           Coursify
@@ -44,13 +51,15 @@ function Header() {
         <Link to={"/admin"} className="btn btn-primary btn-sm btn-outline">
           🧑‍🏫 Admin
         </Link>
-        <div className="form-control">
+        <form onSubmit={(e) => handleSearch(e)} className="form-control">
           <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
             type="text"
             placeholder="Search"
             className="input input-bordered w-24 md:w-auto"
           />
-        </div>
+        </form>
         {isLoading || (isError && <div className="h-10 w-10 skeleton"></div>)}
         {isFetched && (
           <div className="dropdown dropdown-end">

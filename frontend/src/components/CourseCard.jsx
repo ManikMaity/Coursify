@@ -19,7 +19,8 @@ function CourseCard({course, purchased = false}) {
     }
   });
 
-function handleEnroll (){
+function handleEnroll (e){
+  e.stopPropagation();
   mutation.mutate(course._id);
 }
 
@@ -27,8 +28,13 @@ function handleStartCourse(){
   navigator(`/coursePage/${course._id}`);
 }
 
+function handleCardClick(e){
+  e.stopPropagation();
+  navigator(`/detail/${course._id}`);
+}
+
   return (
-    <div key={course?.id} className="card bg-base-100 shadow-lg">
+    <div onClick={handleCardClick} key={course?.id} className="card bg-base-100 shadow-lg cursor-pointer">
             <figure>
               <img src={course?.imageLink} alt={course?.title} className="w-full h-40 object-cover" />
             </figure>
