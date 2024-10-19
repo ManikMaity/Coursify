@@ -3,7 +3,7 @@ import React from 'react'
 import { useMutation } from 'react-query'
 import addToPurchase from '../services/addToPurchase'
 import {makeTextShorter} from '../util/util'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 // eslint-disable-next-line react/prop-types
 function CourseCard({course, purchased = false}) {
@@ -24,7 +24,8 @@ function handleEnroll (e){
   mutation.mutate(course._id);
 }
 
-function handleStartCourse(){
+function handleStartCourse(e){
+  e.stopPropagation();
   navigator(`/coursePage/${course._id}`);
 }
 
