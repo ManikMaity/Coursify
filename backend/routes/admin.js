@@ -5,7 +5,7 @@ const { CourseModel, AdminModel } = require("../db");
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { default: axios } = require("axios");
-const { formatPlaylistData } = require("../util");
+const { formatPlaylistData, getTotalDuration } = require("../util");
 const adminRoute = express.Router();
 
 const saltRound = process.env.SALT_ROUND;
@@ -148,11 +148,13 @@ adminRoute.post("/courses/add", adminAuth, async (req, res) => {
       `https://export-youtube-playlist.vercel.app/get-data/?url=${ytPlaylistLink}&file_type=CSV`
     );
     const data = formatPlaylistData(response);
+    const totalDuration = getTotalDuration(data?.videos);
 
     await CourseModel.create({
       title,
       description,
       price,
+      totalDuration,
       imageLink,
       published,
       publishedBy: admin._id,

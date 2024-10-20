@@ -42,7 +42,8 @@ const Course = mongoose.Schema({
     published : Boolean,
     publishedBy : ObjectId,
     purchasedBy : Array,
-    videos : Array
+    videos : Array,
+    totalDuration : Number
 })
 
 
