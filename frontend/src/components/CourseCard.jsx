@@ -48,6 +48,8 @@ function handleCardClick(e){
                 <span className="text-lg font-semibold text-primary">Price: ${course?.price}</span>
                 <button onClick={handleEnroll} className="btn btn-primary">{mutation.isLoading ? "Enrolling.." :"Enroll Now"}</button>
               </div>}
+            {mutation.isError &&<p className='text-red-500 font-light text-sm'>{mutation.error.response.data.error}</p>}
+
             </div>
           </div>
   )

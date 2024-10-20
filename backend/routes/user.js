@@ -116,6 +116,13 @@ userRouter.post("/courses/:courseId", auth, async (req, res) => {
   try {
     const courseId = req.params.courseId;
     const user = req.user;
+    // cheack if user already purchased this course
+    const findCourse = await CourseModel.findById(courseId);
+
+    if (findCourse.purchasedBy.includes(user._id)) {
+      throw new Error("You have already purchased this course");
+    }
+
     const course = await CourseModel.findByIdAndUpdate(courseId, {
       $push: { purchasedBy: user._id },
     });
@@ -138,6 +145,8 @@ userRouter.get("/purchasedCourses", auth, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Search in courses
 
 // Get course data
 userRouter.get("/watch/:courseid", auth, async (req, res) => {

@@ -51,3 +51,9 @@
     "password": "john12345"
 
 ```
+
+### TODO:
+- Search Page Functionality
+- Course Detail Page functionality
+- Show course enrolled if purchased already     
+- Edit Admin functionality
