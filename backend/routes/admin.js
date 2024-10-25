@@ -164,6 +164,7 @@ adminRoute.post("/courses/add", adminAuth, async (req, res) => {
     const imageLink = req.body.imageLink;
     const published = req.body.published;
     const ytPlaylistLink = req.body.ytPlaylistLink;
+    const {CourseOverview, LearningObjectives, Requirements, Language, DifficultyLevel} = req.body;
 
     const inputValidated = requireAddCourseBody.safeParse(req.body);
     if (!inputValidated.success) {
@@ -185,6 +186,11 @@ adminRoute.post("/courses/add", adminAuth, async (req, res) => {
       publishedBy: admin._id,
       purchasedBy: [],
       videos: data.videos,
+      CourseOverview,
+      LearningObjectives,
+      Requirements,
+      Language,
+      DifficultyLevel
     });
 
     res.json({ msg: "Course created" });
@@ -193,6 +199,8 @@ adminRoute.post("/courses/add", adminAuth, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
 
 // Edit course
 adminRoute.put("/courses/:courseId", adminAuth, async (req, res) => {

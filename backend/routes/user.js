@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const { requireSignupBody, requireLoginBody } = require("../validation");
-const { CourseModel, UserModel } = require("../db");
+const { CourseModel, UserModel, AdminModel } = require("../db");
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const userRouter = express.Router();
@@ -167,5 +167,37 @@ userRouter.get("/watch/:courseid", auth, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Get course deatails
+userRouter.get("/courses/:courseId", auth, async (req, res) => {
+  try{
+    const userId = req.user._id;
+    const courseId = req.params.courseId;
+    const course = await CourseModel.findById(courseId);
+    const instructorId = course.publishedBy.toString();
+    const instructor = await AdminModel.findById(instructorId);
+    const {title, price, imageLink, totalDuration, CourseOverview, LearningObjectives, Requirements, Language, DifficultyLevel, purchasedBy } = course;
+    const {username : instructorName, profileImageLink} = instructor;
+    res.json({ 
+      title, 
+      price, 
+      imageLink, 
+      totalDuration, 
+      CourseOverview, 
+      LearningObjectives, 
+      Requirements, 
+      Language, 
+      DifficultyLevel, 
+      instructorName, 
+      profileImageLink,
+      purchased : purchasedBy.includes(userId)
+     });
+  }
+  catch(err){
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+
+})
 
 module.exports = {userRouter};

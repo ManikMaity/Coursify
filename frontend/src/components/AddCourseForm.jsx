@@ -3,6 +3,7 @@ import AddCourseForm1 from "./admin/AddCourseForm1";
 import AddCourseForm2 from "./admin/AddCourseForm2";
 import { useMutation } from "react-query";
 import addNewCourse from "../services/addNewCourse";
+import { fetchCourseDetail } from "../services/fetchCourseDetail";
 
 const AddCourseForm = ({ setShowCourseAddForm, showCourseAddForm, refetch }) => {
   const [formNumber, setFormNumber] = useState(1);
@@ -35,24 +36,51 @@ const AddCourseForm = ({ setShowCourseAddForm, showCourseAddForm, refetch }) => 
 
   const mutation = useMutation(addNewCourse, {
     onSuccess : async(data) => {
-      setPublished(false);
-      setCourseTitle("");
-      setCourseDescription("");
-      setCoursePrice(0);
-      setCourseImage("");
-      await refetch();
+      resetAllData();
+      setFormNumber(1);
       setShowCourseAddForm(false);
+      await refetch();
+    },
+    onError : (error) => {
+      console.log(error);
     }
   });
 
-  function handleSubmit() {
+  const mutation2 = useMutation(fetchCourseDetail, {
+    onSuccess : (data) => {
+      const courseData = data.data;
+      setCourseOverview(courseData.CourseOverview);
+      setLearningObjectives(courseData.LearningObjectives.join(", "));
+      setLanguage(courseData.Language);
+      setRequirements(courseData.Requirements)
+    },
+    onError : (error) => {
+      console.log(error);
+    }
+  })
+
+  function handleFechCourseDetail() {
+    if (courseTitle.trim() == ""  || courseDescription.trim() == "") return;
+    mutation2.mutate({
+      title: courseTitle,
+      description : courseDescription
+    });
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
     mutation.mutate({
       title: courseTitle,
       description: courseDescription,
       price: Number(coursePrice),
       imageLink: courseImage,
       published,
-      ytPlaylistLink : ytLink
+      ytPlaylistLink : ytLink,
+      CourseOverview : courseOverview,
+      LearningObjectives : learningObjectives.split(", "),
+      Requirements : requirements,
+      Language : language,
+      DifficultyLevel : difficultyLevel
     });
   }
 
@@ -95,6 +123,9 @@ const AddCourseForm = ({ setShowCourseAddForm, showCourseAddForm, refetch }) => 
         setLanguage={setLanguage}
         setFormNumber={setFormNumber}
         handleCancel={handleCancel}
+        handleFechCourseDetail={handleFechCourseDetail}
+        mutation2={mutation2}
+        handleSubmit={handleSubmit}
         />
       )}
     </div>

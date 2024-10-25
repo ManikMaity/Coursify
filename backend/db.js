@@ -16,14 +16,14 @@ mongoose.connect(connectionString)
 
 // Defining the schema 
 
-const User = mongoose.Schema({
+const User = new Schema({
     username : String,
     email : String,
     password : String,
     isAdmin : Boolean
 })
 
-const Admin = mongoose.Schema({
+const Admin = new Schema({
     username : String,
     email : String,
     password : String,
@@ -34,7 +34,7 @@ const Admin = mongoose.Schema({
 })
 
 
-const Course = mongoose.Schema({
+const Course = new Schema({
     title : String,
     description : String,
     price : Number,
@@ -43,8 +43,29 @@ const Course = mongoose.Schema({
     publishedBy : ObjectId,
     purchasedBy : Array,
     videos : Array,
-    totalDuration : Number
+    totalDuration : Number,
+    CourseOverview : {
+        type : String,
+        required : true
+    },
+    LearningObjectives : {
+        type : Array,
+        required : true
+    },
+    Requirements : {
+        type : String,
+        required : true
+    },
+    Language : {
+        type : String,
+        required : true
+    },
+    DifficultyLevel : {
+        type : String,
+        required : true
+    }
 })
+
 
 
 // Defining the model

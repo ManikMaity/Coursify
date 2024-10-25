@@ -41,7 +41,7 @@ function handleCardClick(e){
             </figure>
             <div className="card-body">
               <h3 className="text-xl font-bold text-neutral-content">{course?.title}</h3>
-              <p className="text-neutral-content">{makeTextShorter(course?.description)}</p>
+              <p className="text-neutral-content">{makeTextShorter(course?.CourseOverview)}</p>
               {purchased ? <div className="flex justify-between items-center mt-4">
                 <button className="btn btn-primary" onClick={handleStartCourse}>Strat Course</button>
               </div> :<div className="flex justify-between items-center mt-4">

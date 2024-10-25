@@ -3,6 +3,8 @@ import { FaRobot } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 
 const AddCourseForm2 = ({
+  mutation2,
+  handleFechCourseDetail,
   setFormNumber,
   courseOverview,
   setCourseOverview,
@@ -15,12 +17,9 @@ const AddCourseForm2 = ({
   language,
   setLanguage,
   handleCancel,
+  handleSubmit
 }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Submit form logic here
-  };
-
+  
   return (
     <div className="w-full max-w-[800px] flex flex-col bg-base-100 shadow-md rounded-md p-6">
       <div className="flex justify-between items-center">
@@ -29,8 +28,8 @@ const AddCourseForm2 = ({
         </h2>
         <button className="btn btn-neutral btn-sm" onClick={() => setFormNumber(1)}><IoIosArrowBack /></button>
       </div>
-      <button className="btn btn-primary btn-sm">
-        Fill by AI <FaRobot />
+      <button className="btn btn-primary btn-sm" onClick={handleFechCourseDetail}>
+        {mutation2.isLoading ? "Loading..." : "Fill by AI"} <FaRobot />
       </button>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -87,7 +86,7 @@ const AddCourseForm2 = ({
                 onChange={(e) => setDifficultyLevel(e.target.value)}
                 className="select select-bordered w-full"
               >
-                <option value={"beginner"} selected>
+                <option value={"beginner"}>
                   Beginner
                 </option>
                 <option value={"intermediate"}>Intermediate</option>
@@ -109,6 +108,7 @@ const AddCourseForm2 = ({
               />
             </div>
           </div>
+          {mutation2.isError && <p className="text-red-500">{mutation2.error.response.data.error}</p>}
         </div>
         {/* Submit Button */}
         <div className="form-control grid grid-cols-1 md:grid-cols-2  gap-3 mt-6">

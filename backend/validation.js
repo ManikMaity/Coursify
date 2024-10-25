@@ -64,6 +64,11 @@ const requireAddCourseBody = z.object({
       "Invalid YouTube Playlist link, ex - https://www.youtube.com/playlist?list=PLwGdqUZWnOp00IbeN0OtL9dmnasipZ9x8"
     )
     .optional(),
+    CourseOverview : z.string().min(1, "CourseOverview is required"), 
+    LearningObjectives : z.array(z.string()).min(1, "LearningObjectives is required"),
+    Requirements : z.string().min(1, "Requirements is required"),
+    Language : z.string().min(1, "Language is required"),
+    DifficultyLevel : z.string().min(1, "DifficultyLevel is required"),
 });
 
 const ytPlaylistLink = z.string().min(1, "YouTube Playlist link is required").max(200, "YouTube Playlist link cannot exceed 200 characters").regex(
