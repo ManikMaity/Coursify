@@ -1,39 +1,45 @@
 require("dotenv").config();
 const express = require("express");
-const { requireAddCourseBody, requireSignupBodyForAdmin, requireLoginBody, ytPlaylistLink } = require("../validation");
+const {
+  requireAddCourseBody,
+  requireSignupBodyForAdmin,
+  requireLoginBody,
+  ytPlaylistLink,
+  courseDetaildsValidator,
+} = require("../validation");
 const { CourseModel, AdminModel } = require("../db");
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { default: axios } = require("axios");
 const { formatPlaylistData, getTotalDuration } = require("../util");
+const { generateContent } = require("../config/geminiConfig");
 const adminRoute = express.Router();
 
 const saltRound = process.env.SALT_ROUND;
 const JWT_SECRECT = process.env.JWT_SECRECT;
 
 async function adminAuth(req, res, next) {
-    try {
-      const adminToken = req.headers.admintoken;
-  
-      if (!adminToken) {
-        throw new Error("Admin token is not provided");
-      }
-  
-      const decodedData = JWT.verify(adminToken, JWT_SECRECT);
-      const admin = await AdminModel.findOne({
-        email: decodedData?.email,
-      });
-      if (admin) {
-        req.admin = admin;
-        next();
-      } else {
-        throw new Error("Admin not found");
-      }
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  }
+  try {
+    const adminToken = req.headers.admintoken;
 
+    if (!adminToken) {
+      throw new Error("Admin token is not provided");
+    }
+
+    const decodedData = JWT.verify(adminToken, JWT_SECRECT);
+    const admin = await AdminModel.findOne({
+      email: decodedData?.email,
+    });
+    if (admin) {
+      req.admin = admin;
+      next();
+    } else {
+      throw new Error("Admin not found");
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
 
 adminRoute.post("/signup", async (req, res) => {
   try {
@@ -124,6 +130,25 @@ adminRoute.get("/courses/yt", adminAuth, async (req, res) => {
     );
     const data = formatPlaylistData(response);
     res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get course details from ai
+adminRoute.post("/courses/ai", adminAuth, async (req, res) => {
+  try {
+    const title = req.body.title;
+    const description = req.body.description;
+
+    // Input validation
+    const inputValidated = courseDetaildsValidator.safeParse(req.body);
+    if (!inputValidated.success) {
+      throw new Error(`${inputValidated.error.errors[0].message}`);
+    }
+
+    const response = await generateContent(title, description);
+    res.json(response);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -230,5 +255,4 @@ adminRoute.get("/courses", adminAuth, async (req, res) => {
   }
 });
 
-
-module.exports = {adminRoute};
+module.exports = { adminRoute };

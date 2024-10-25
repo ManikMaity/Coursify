@@ -71,5 +71,15 @@ const ytPlaylistLink = z.string().min(1, "YouTube Playlist link is required").ma
     "Invalid YouTube Playlist link, ex - https://www.youtube.com/playlist?list=PLwGdqUZWnOp00IbeN0OtL9dmnasipZ9x8"
   );
 
+const courseDetaildsValidator = z.object({
+  title: z
+    .string()
+    .min(5, "Title should be at least 5 characters long")
+    .max(200, "Title cannot exceed 100 characters"),
+  description: z
+    .string()
+    .min(30, "Description should be at least 30 characters long")
+    .max(300, "Description cannot exceed 300 characters")
+});
 
-module.exports = {requireSignupBody, requireLoginBody, requireAddCourseBody, requireSignupBodyForAdmin, ytPlaylistLink}
+module.exports = {requireSignupBody, requireLoginBody, requireAddCourseBody, requireSignupBodyForAdmin, ytPlaylistLink, courseDetaildsValidator};
