@@ -1,70 +1,51 @@
-import React, { useState } from "react";
+import React from "react";
 import { useMutation } from "react-query";
-import addNewCourse from "../../services/addNewCourse";
 import fetchPlaylistData from "../../services/fetchPlaylistData";
 
-function AddCourseForm1({setShowCourseAddForm, refetch}) {
+function AddCourseForm1({
+  setShowCourseAddForm,
+  published,
+  setPublished,
+  courseTitle,
+  setCourseTitle,
+  courseDescription,
+  setCourseDescription,
+  coursePrice,
+  setCoursePrice,
+  courseImage,
+  setCourseImage,
+  ytLink,
+  setYtLink,
+  setFormNumber,
+  handleCancel,
+}) {
+  const mutation2 = useMutation({
+    mutationFn: fetchPlaylistData,
+    cacheTime: 1000 * 60 * 10,
+    onSuccess: (data) => autoFillAllFiled(data.data),
+    onError: (data) => console.log(data),
+  });
 
-    const [published, setPublished] = useState(false);
-    const [courseTitle, setCourseTitle] = useState("");
-    const [courseDescription, setCourseDescription] = useState("");
-    const [coursePrice, setCoursePrice] = useState(0);
-    const [courseImage, setCourseImage] = useState("");
-    const [ytLink, setYtLink] = useState("");
-  
-    const mutation = useMutation(addNewCourse, {
-      onSuccess : async(data) => {
-        setPublished(false);
-        setCourseTitle("");
-        setCourseDescription("");
-        setCoursePrice(0);
-        setCourseImage("");
-        await refetch();
-        setShowCourseAddForm(false);
-      }
-    });
-  
-    const mutation2 = useMutation({
-      mutationFn : fetchPlaylistData, cacheTime : 1000*60*10, onSuccess : (data) => autoFillAllFiled(data.data), onError : (data) => console.log(data)})
-  
-    function autoFillAllFiled (data){
-        setPublished(false);
-        setCourseTitle(`${data?.playlistTitle}`);
-        setCourseDescription(`${data?.description}`);
-        setCourseImage(`${data?.videos[0].thumbnail}`);
-    }
-  
-  
-    function handleSubmit() {
-      mutation.mutate({
-        title: courseTitle,
-        description: courseDescription,
-        price: Number(coursePrice),
-        imageLink: courseImage,
-        published,
-        ytPlaylistLink : ytLink
-      });
-    }
-  
-    function handleCancel() {
-      setShowCourseAddForm(false);
-    }
-  
-    function handleAutoFill() {
-      mutation2.mutate(ytLink);
-    }
-  
+  function autoFillAllFiled(data) {
+    setPublished(false);
+    setCourseTitle(`${data?.playlistTitle}`);
+    setCourseDescription(`${data?.description}`);
+    setCourseImage(`${data?.videos[0].thumbnail}`);
+  }
 
+  function handleAutoFill() {
+    mutation2.mutate(ytLink);
+  }
 
   return (
     <div className="w-full max-w-lg flex flex-col bg-base-100 shadow-md rounded-md p-6">
-        <h2 className="text-3xl font-bold mb-6">Add New Course</h2>
+      <h2 className="text-xl md:text-3xl font-bold mb-6">Add New Course</h2>
 
-        <div className="form-control mb-4">
-          <label className="label">
-            <span className="label-text">Yt Playlist Link</span>
-          </label>
-          <div className="flex gap-2 items-center">
+      <div className="form-control mb-4">
+        <label className="label">
+          <span className="label-text">Yt Playlist Link</span>
+        </label>
+        <div className="flex gap-2 items-center">
           <input
             type="text"
             value={ytLink}
@@ -72,12 +53,17 @@ function AddCourseForm1({setShowCourseAddForm, refetch}) {
             placeholder="Enter youtube playlist link here.."
             className="input input-bordered w-full"
           />
-          <button onClick={handleAutoFill} className="btn btn-primary btn-outline btn-sm">{mutation2.isLoading ? "Loading..." : "Autofill"}</button>
-          </div>
+          <button
+            onClick={handleAutoFill}
+            className="btn btn-primary btn-outline btn-sm"
+          >
+            {mutation2.isLoading ? "Loading..." : "Autofill"}
+          </button>
         </div>
-
+      </div>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
         {/* Course Title */}
-        <div className="form-control mb-4">
+        <div className="form-control mb-4 w-full md:w-[60%]">
           <label className="label">
             <span className="label-text">Course Title</span>
           </label>
@@ -90,52 +76,8 @@ function AddCourseForm1({setShowCourseAddForm, refetch}) {
           />
         </div>
 
-        {/* Course Description */}
-        <div className="form-control mb-4">
-          <label className="label">
-            <span className="label-text">Course Description</span>
-          </label>
-          <textarea
-            value={courseDescription}
-            onChange={(e) => setCourseDescription(e.target.value)}
-            placeholder="Enter course description"
-            className="textarea textarea-bordered w-full"
-          ></textarea>
-        </div>
-
-        <div className="flex flex-row justify-between gap-3">
-          {/* Course Price */}
-          <div className="form-control mb-4">
-            <label className="label">
-              <span className="label-text">Price (in USD)</span>
-            </label>
-            <input
-              value={coursePrice}
-              onChange={(e) => setCoursePrice(e.target.value)}
-              min={0}
-              type="number"
-              placeholder="Enter course price"
-              className="input input-bordered w-full"
-            />
-          </div>
-
-          {/* Image URL */}
-          <div className="form-control mb-4">
-            <label className="label">
-              <span className="label-text">Image URL</span>
-            </label>
-            <input
-              value={courseImage}
-              onChange={(e) => setCourseImage(e.target.value)}
-              type="text"
-              placeholder="Enter image URL"
-              className="input input-bordered w-full"
-            />
-          </div>
-        </div>
-
         {/* Published Checkbox */}
-        <div className="form-control mb-6">
+        <div className="form-control mb-4 md:mb-0">
           <label className="cursor-pointer flex items-center">
             <input
               type="checkbox"
@@ -146,22 +88,62 @@ function AddCourseForm1({setShowCourseAddForm, refetch}) {
             <span className="ml-2">Publish Course</span>
           </label>
         </div>
-        {mutation.isError && (
-            <p className="text-red-500">{mutation.error.response.data.error}</p>
-          )}
+      </div>
 
-        {/* Submit Button */}
-        <div className="form-control grid grid-cols-1 md:grid-cols-2  gap-3 mt-6">
-        <button className="btn btn-error" onClick={handleCancel}>
-            Cancel
-          </button>
-          <button className="btn btn-primary" onClick={handleSubmit}>
-            {mutation.isLoading ? "Submiting.." : "Submit"}
-          </button>
-         
+      {/* Course Description */}
+      <div className="form-control mb-4">
+        <label className="label">
+          <span className="label-text">Course Description</span>
+        </label>
+        <textarea
+          value={courseDescription}
+          onChange={(e) => setCourseDescription(e.target.value)}
+          placeholder="Enter course description"
+          className="textarea textarea-bordered w-full"
+        ></textarea>
+      </div>
+
+      <div className="flex flex-row justify-between gap-3">
+        {/* Course Price */}
+        <div className="form-control mb-4">
+          <label className="label">
+            <span className="label-text">Price (in USD)</span>
+          </label>
+          <input
+            value={coursePrice}
+            onChange={(e) => setCoursePrice(e.target.value)}
+            min={0}
+            type="number"
+            placeholder="Enter course price"
+            className="input input-bordered w-full"
+          />
+        </div>
+
+        {/* Image URL */}
+        <div className="form-control mb-4">
+          <label className="label">
+            <span className="label-text">Image URL</span>
+          </label>
+          <input
+            value={courseImage}
+            onChange={(e) => setCourseImage(e.target.value)}
+            type="text"
+            placeholder="Enter image URL"
+            className="input input-bordered w-full"
+          />
         </div>
       </div>
-  )
-}
 
-export default AddCourseForm1
+      {/* Submit Button */}
+      <div className="form-control grid grid-cols-1 md:grid-cols-2  gap-3 mt-6">
+        <button className="btn btn-error" onClick={handleCancel}>
+          Cancel
+        </button>
+        <button className="btn btn-primary" onClick={() => setFormNumber(2)}>
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}
+export default AddCourseForm1;

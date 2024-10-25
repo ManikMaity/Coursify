@@ -45,7 +45,7 @@ function Dashboard() {
   return (
     <>
     <div className="flex flex-col lg:flex-row bg-base-200 min-h-screen">
-      {showCourseAddForm && <AddCourseForm refetch={refetch} setShowCourseAddForm={setShowCourseAddForm}/>}
+      {showCourseAddForm && <AddCourseForm refetch={refetch} showCourseAddForm={showCourseAddForm} setShowCourseAddForm={setShowCourseAddForm}/>}
       {/* User Profile Sidebar */}
       <aside className="w-full lg:w-1/4 bg-base-100 shadow-lg p-4 flex flex-col items-center">
         <img
