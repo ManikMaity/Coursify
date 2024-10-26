@@ -15,7 +15,7 @@ const { formatPlaylistData, getTotalDuration } = require("../util");
 const { generateContent } = require("../config/geminiConfig");
 const adminRoute = express.Router();
 
-const saltRound = process.env.SALT_ROUND;
+const saltRound = Number(process.env.SALT_ROUND);
 const JWT_SECRECT = process.env.JWT_SECRECT;
 
 async function adminAuth(req, res, next) {
@@ -77,6 +77,7 @@ adminRoute.post("/signup", async (req, res) => {
 
     res.json({ msg: "Admin account created😊" });
   } catch (err) {
+    console.log(err)
     res.status(500).json({ error: err.message });
   }
 });
