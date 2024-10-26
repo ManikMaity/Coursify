@@ -105,7 +105,22 @@ userRouter.post("/login", async (req, res) => {
 userRouter.get("/courses", auth, async (req, res) => {
   try {
     const allCourses = await CourseModel.find();
-    res.json(allCourses);
+    const courses = allCourses.map((course) => {
+      return {
+        _id: course._id,
+        title: course.title,
+        imageLink: course.imageLink,
+        price: course.price,
+        published : course.published,
+        totalDuration : course.totalDuration,
+        CourseOverview : course.CourseOverview,
+        Language : course.Language,
+        DifficultyLevel : course.DifficultyLevel,
+        purchased : course.purchasedBy.includes(req.user._id)
+      }
+    })
+
+    res.json(courses);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

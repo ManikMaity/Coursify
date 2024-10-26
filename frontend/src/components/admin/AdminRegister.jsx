@@ -28,10 +28,14 @@ const AdminRegister = ({ setShowRegister }) => {
 
   const mutation = useMutation(adminRegister, {
     onSuccess : (data) => {
+      resetAllFields();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500)
       console.log(data);
     },
-    onError : (data) => {
-      console.log(data);
+    onError : (error) => {
+      console.log(error);
     }
   })
 
@@ -40,10 +44,6 @@ const AdminRegister = ({ setShowRegister }) => {
     e.preventDefault();
     if (password == confirmPassword){
       mutation.mutate({username, password, email, role, description : profileDescription, profileImageLink, socialLink});
-      resetAllFields();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500)
     }
     else {
       console.log("Confirm password not correct")
@@ -188,7 +188,7 @@ const AdminRegister = ({ setShowRegister }) => {
               value={role}
               onChange={(e) => setRole(e.target.value)}
               >
-                <option value="educator" selected>Course Educator</option>
+                <option value="educator">Course Educator</option>
                 <option value="student">Student</option>
                 <option value="content-manager">Content Manager</option>
                 <option value="marketing-specialist">

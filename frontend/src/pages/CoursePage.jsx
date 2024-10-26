@@ -13,8 +13,6 @@ const CoursePage = () => {
     ["courseData", courseid],
     () => fetchCourseData(courseid),
     {
-      staleTime: 1000 * 60 * 10,
-      cacheTime: 1000 * 60 * 10,
       onSuccess: (data) => {
         setVideos(data.data.videos);
       },

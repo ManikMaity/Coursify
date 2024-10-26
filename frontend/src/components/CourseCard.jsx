@@ -46,7 +46,7 @@ function handleCardClick(e){
                 <button className="btn btn-primary" onClick={handleStartCourse}>Strat Course</button>
               </div> :<div className="flex justify-between items-center mt-4">
                 <span className="text-lg font-semibold text-primary">Price: ${course?.price}</span>
-                <button onClick={handleEnroll} className="btn btn-primary">{mutation.isLoading ? "Enrolling.." :"Enroll Now"}</button>
+                <button onClick={handleEnroll} disabled={course?.purchased} className="btn btn-primary">{mutation.isLoading ? "Enrolling.." :`${course?.purchased ? "Enrolled" :"Enroll Now"}`}</button>
               </div>}
             {mutation.isError &&<p className='text-red-500 font-light text-sm'>{mutation.error.response.data.error}</p>}
 

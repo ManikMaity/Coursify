@@ -24,9 +24,10 @@ const CourseDetail = () => {
 function handleEnroll (e){
   e.stopPropagation();
   mutation.mutate(courseid);
+  refetch();
 }
 
-  const {data, isLoading, isError, isFetched} = useQuery(["courseData", courseid], () => fetchCourseDetailData(courseid), {
+  const {data, isLoading, isError, isFetched, refetch} = useQuery(["courseData", courseid], () => fetchCourseDetailData(courseid), {
     cacheTime : 1000*60*10,
     staleTime :  1000*60*10
   })
