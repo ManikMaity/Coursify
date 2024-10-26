@@ -19,7 +19,7 @@ function Header() {
   function handleSearch(e) {
     e.preventDefault()
     if (search.trim() === "") return;
-    navigator(`/search/${search}`);
+    navigator(`/search?q=${search}`);
   }
 
   if (isLoading) {

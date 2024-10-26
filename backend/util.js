@@ -134,9 +134,11 @@ function getTotalDuration(videos = videos_data) {
  return totalDuration;
 }
 
+function firstCharToUpper(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 
 
 
-
-module.exports = {formatPlaylistData, getTotalDuration};
+module.exports = {formatPlaylistData, getTotalDuration, firstCharToUpper};

@@ -4,6 +4,7 @@ const { requireSignupBody, requireLoginBody } = require("../validation");
 const { CourseModel, UserModel, AdminModel } = require("../db");
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { firstCharToUpper } = require("../util");
 const userRouter = express.Router();
 
 const saltRound = process.env.SALT_ROUND;
@@ -162,6 +163,70 @@ userRouter.get("/purchasedCourses", auth, async (req, res) => {
 });
 
 // Search in courses
+userRouter.post("/search", auth, async (req, res) => {
+  try {
+    const query = req.query.q || ""; 
+    const { free, difficulty, duration, language } = req.body;
+    
+    // Initial filter data
+    let allCourses = await CourseModel.find({
+      title: { $regex: new RegExp(query, 'i') }
+    });
+
+    // more filter 
+    if (free) {
+      allCourses = allCourses.filter((course) => {
+        return course.price == 0
+      });
+    }
+
+    if (difficulty) {
+      allCourses = allCourses.filter((course) => course.DifficultyLevel.toLowerCase() === difficulty.toLowerCase());
+    }
+    if (language) {
+      allCourses = allCourses.filter((course) => course.Language.toLowerCase() === language.toLowerCase());
+    }
+    
+    if (duration) {
+      allCourses = allCourses.filter(course => {
+        const hours = course.totalDuration / 3600;
+        switch (duration) {
+          case "<1":
+            return hours < 1;
+          case "1-3":
+            return hours >= 1 && hours <= 3;
+          case "3-6":
+            return hours >= 3 && hours <= 6;
+          case ">6":
+            return hours > 6;
+          default:
+            return true;
+        }
+      });
+    }
+
+    const courses = allCourses.map((course) => {
+      return {
+        _id: course._id,
+        title: course.title,
+        imageLink: course.imageLink,
+        price: course.price,
+        published : course.published,
+        totalDuration : course.totalDuration,
+        CourseOverview : course.CourseOverview,
+        Language : course.Language,
+        DifficultyLevel : course.DifficultyLevel,
+        purchased : course.purchasedBy.includes(req.user._id)}
+      });
+
+    res.json(courses);
+    
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // Get course data
 userRouter.get("/watch/:courseid", auth, async (req, res) => {

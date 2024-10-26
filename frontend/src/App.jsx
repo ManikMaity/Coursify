@@ -40,7 +40,7 @@ function App() {
       element : <CoursePage/>
     },
     {
-      path : "search/:text",
+      path : "search",
       element : <Search/>
     }, 
     {
