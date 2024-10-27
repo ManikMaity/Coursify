@@ -34,7 +34,7 @@ const EditCourseForm = ({ currentCourse, setShowEditForm, refetch }) => {
   }
 
   return (
-    <div className="bg-[#1b1b1bb7] flex items-center fixed top-0 z-20 right-0 min-h-screen w-screen  justify-center p-6">
+    <div className="bg-[#1b1b1bb7] flex items-center fixed top-0 z-50 right-0 min-h-screen w-screen  justify-center p-6">
       <div className="w-full max-w-lg flex flex-col bg-base-100 shadow-lg rounded-md p-6">
         <h2 className="text-2xl font-semibold mb-4">Edit Course</h2>
 
